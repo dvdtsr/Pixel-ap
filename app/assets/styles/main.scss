@@ -37,7 +37,7 @@ body {
              height:500px;
              margin:100px auto 0 auto;
              transition: all ease-in-out 0.3s;
-             div[class^="cube-"] {
+             .cube {
                    position: absolute;
                    transform-style: preserve-3d;
                    transition: all ease-in 0.4s;

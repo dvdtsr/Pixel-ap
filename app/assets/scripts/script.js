@@ -11,7 +11,7 @@ $(document).ready(function() {
        cubeDim = wrapperDim / gridSize;
 
        // create as many object "level-N" property than there are gridsize-lvl
-       (function() { // TODO OBJECT FFS
+       (function() {
               Datas.levels = gridSize;
               var i = 0;
               while(i < gridSize) {
@@ -62,9 +62,9 @@ $(document).ready(function() {
               var    current = $(this).attr("data-tile-index"),
                      tileX,
                      tileY;
-              if($(".cube-"+current).length){
+              if($(".cube[data-cube-index='"+current+"'][data-cube-lvl='"+lvl+"']").length){ // remove cube if exist
                      $(this).removeClass("filled");
-                     $(".cube-"+current).remove();
+                     $(".cube[data-cube-index='"+current+"'][data-cube-lvl='"+lvl+"']").remove();
               }
               else{ // TODO fix tileX and tileY calcul logic
                      if(current.length === 1) {
@@ -104,7 +104,7 @@ $(document).ready(function() {
               var k = 0;
               while(k < x.length) {
                      currentTilesPosition.push(x[k]);
-                     k++
+                     k++;
               }
        }
 
@@ -131,7 +131,7 @@ $(document).ready(function() {
                      zPos = z*cubeDim,
                      elem = document.createElement("div");
               $(elem).attr({
-                     "class" : "cube-"+id,
+                     "class" : "cube",
                      "data-cube-index" : id,
                      "data-cube-lvl" : lvl
               });
@@ -154,7 +154,56 @@ $(document).ready(function() {
                             "transform" : "translate3d("+xPos+"px, "+yPos+"px, "+zPos+"px)",
                             "-ms-transform" : "translate3d("+xPos+"px, "+yPos+"px, "+zPos+"px)",
                             "-webkit-transform" : "translate3d("+xPos+"px, "+yPos+"px, "+zPos+"px)",
-              }, 500);
+                     }, 500);
               });
        }
+
+       // left       =      37
+       // up         =      38
+       // right      =      39
+       // down       =      40
+       // Rotate view on keydown
+       var    rotateX = 10,
+              rotateY = -12;
+       $("body").keydown(function(e) {
+              if(e.keyCode == 37) {
+                     rotateY += 10;
+              }
+              if(e.keyCode == 38) {
+                     rotateX -= 10;
+              }
+              if(e.keyCode == 39) {
+                     rotateY -= 10;
+              }
+              if(e.keyCode == 40) {
+                     rotateX += 10;
+              }
+              $("#pixel-area").css({
+                     "transform" : "rotateX("+rotateX+"deg) rotateY("+rotateY+"deg)",
+                     "-ms-transform" : "rotateX("+rotateX+"deg) rotateY("+rotateY+"deg)",
+                     "-webkit-transform" : "rotateX("+rotateX+"deg) rotateY("+rotateY+"deg)"
+              });
+       });
+       $("button").click(function() { // reset ALL
+              rotateX = 10,
+              rotateY = -12;
+              var i = 0;
+              $("#pixel-area").css({
+                     "transform" : "rotateX("+rotateX+"deg) rotateY("+rotateY+"deg)",
+                     "-ms-transform" : "rotateX("+rotateX+"deg) rotateY("+rotateY+"deg)",
+                     "-webkit-transform" : "rotateX("+rotateX+"deg) rotateY("+rotateY+"deg)"
+              });
+              // reset Object "Datas"
+              $(".cube").remove();
+              $(".filled").removeClass("filled");
+              while(i < gridSize) {
+                     Datas["level_"+i].position = [];
+                     Datas["level_"+i].color = [];
+                     i++;
+              }
+       });
+
+       $('input[type="color"]').hslPicker({
+              color: 'orange'
+       });
 });

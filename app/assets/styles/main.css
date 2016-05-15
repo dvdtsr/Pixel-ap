@@ -48,7 +48,7 @@ body {
   -webkit-transition: all ease-in-out 0.3s;
   transition: all ease-in-out 0.3s;
 }
-#cubes-wrapper #pixel-area div[class^="cube-"] {
+#cubes-wrapper #pixel-area .cube {
   position: absolute;
   -webkit-transform-style: preserve-3d;
   -ms-transform-style: preserve-3d;
