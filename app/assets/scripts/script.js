@@ -79,6 +79,9 @@ $(document).ready(function() {
               var previousLvl = lvl.toString();
               lvl = $(this).val();
               var tilesFromThisLvl = $("div.filled");
+              if(previousLvl != lvl) {
+                     console.log("level changed");
+              }
        });
 
        // create cube
