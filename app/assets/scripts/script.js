@@ -10,12 +10,18 @@ $(document).ready(function() {
        wrapperDim = $("#pixel-area").innerWidth();
        cubeDim = wrapperDim / gridSize;
 
-       // create as many object "datas" property than there are gridsize-lvl
+       // create as many object "level-N" property than there are gridsize-lvl
        (function() { // TODO OBJECT FFS
               Datas.levels = gridSize;
               var i = 0;
               while(i < gridSize) {
-                     Object.defineProperty(Datas, "level-"+i, {value : "tagrossmer"});
+                     Object.defineProperty(Datas, "level_"+i, {
+                                   value : {
+                                          "position" : [],
+                                          "color" : []
+                                   }
+                            }
+                     );
                      i++;
               }
        })();
@@ -76,20 +82,54 @@ $(document).ready(function() {
 
        // manage levels
        $("input").click(function() {
-              var previousLvl = lvl.toString();
+              var    previousLvl = lvl,
+                     tilesFromThisLvl = $("div.filled");
               lvl = $(this).val();
-              var tilesFromThisLvl = $("div.filled");
               if(previousLvl != lvl) {
-                     console.log("level changed");
+                     storeLvlDatas(previousLvl, lvl, tilesFromThisLvl);
               }
        });
 
+       // store Lvl datas on changed
+       function storeLvlDatas(a, b, c) {
+              var    currentTilesPosition = Datas["level_"+a].position,
+                     previousTilesPosition = Datas["level_"+b].position;
+              $(".filled").removeClass("filled");
+              if(previousTilesPosition.length) { // check if clicked level have already been populated and if so, fill this level tiles to show where
+                     populatePreviousTiles(currentTilesPosition, previousTilesPosition);
+              }
+              var x = $.map(c, function(el) {
+                     return $(el).attr("data-tile-index");
+              });
+              var k = 0;
+              while(k < x.length) {
+                     currentTilesPosition.push(x[k]);
+                     k++
+              }
+       }
+
+       // populate previous tiles
+       function populatePreviousTiles(c, p) {
+              var i;
+              for(i=0;i<p.length;i++) {
+                     var    j,
+                            currentTiles = $(".tile");
+                     for(j=0;j < currentTiles.length;j++) {
+                            var    el = $(".tile").eq(j),
+                                   pos = p[i];
+                            if(el.attr("data-tile-index") == pos) {
+                                   $(el).addClass("filled");
+                            }
+                     }
+              }
+       }
+
        // create cube
        function createSetInjectCube(x, y, z, id) {
-              var xPos = x*cubeDim;
-              var yPos = y*cubeDim;
-              var zPos = z*cubeDim;
-              var elem = document.createElement("div");
+              var    xPos = x*cubeDim,
+                     yPos = y*cubeDim,
+                     zPos = z*cubeDim,
+                     elem = document.createElement("div");
               $(elem).attr({
                      "class" : "cube-"+id,
                      "data-cube-index" : id,
