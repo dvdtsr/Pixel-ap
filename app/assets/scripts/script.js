@@ -1,4 +1,39 @@
-var Datas = {};
+var Datas = {}, hslColor = "hsl(50, 50%, 50%)";
+
+// create 3 hsl luminance from one given hue
+function hslLuminance(hslColor, select) {
+       var medium = hslColor[2];
+       if(medium <= 16) {medium = 16}
+       var dark = medium - 15;
+       var border = medium - 16;
+       if(typeof select == "undefined") {return hslColor;}
+       if(select == "medium")      { return "hsl("+hslColor[0]+", "+hslColor[1]+"%, "+medium+"%)"}
+       if(select == "dark")        { return "hsl("+hslColor[0]+", "+hslColor[1]+"%, "+dark+"%)"}
+       if(select == "border")      { return "hsl("+hslColor[0]+", "+hslColor[1]+"%, "+border+"%)"}
+}
+
+// translate RGB to HSL ( see https://codepen.io/pankajparashar/pen/oFzIg )
+function rgbToHsl(r, g, b){
+       r /= 255, g /= 255, b /= 255;
+       var max = Math.max(r, g, b), min = Math.min(r, g, b);
+       var h, s, l = (max + min) / 2;
+       if (max == min) { h = s = 0; }
+       else {
+              var d = max - min;
+              s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+              switch (max){
+                     case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                     case g: h = (b - r) / d + 2; break;
+                     case b: h = (r - g) / d + 4; break;
+              }
+
+              h /= 6;
+       }
+       return [(h*100+0.5)|0, ((s*100+0.5)|0), ((l*100+0.5)|0)];
+}
+
+// radial-gradient(hsl(197, 100%, 50%), hsl(197, 100%, 35%))
+// box-shadow:inset 0 0 5px 3px hsl(197, 80%, 34%);
 
 $(document).ready(function() {
        var    gridSize,
@@ -81,7 +116,7 @@ $(document).ready(function() {
        });
 
        // manage levels
-       $("input").click(function() {
+       $("input[type='radio']").click(function() {
               var    previousLvl = lvl,
                      tilesFromThisLvl = $("div.filled");
               lvl = $(this).val();
@@ -92,8 +127,8 @@ $(document).ready(function() {
 
        // store Lvl datas on changed
        function storeLvlDatas(a, b, c) {
-              var    currentTilesPosition = Datas["level_"+a].position,
-                     previousTilesPosition = Datas["level_"+b].position;
+              var currentTilesPosition = Datas["level_"+a].position;
+              var previousTilesPosition = Datas["level_"+b].position;
               $(".filled").removeClass("filled");
               if(previousTilesPosition.length) { // check if clicked level have already been populated and if so, fill this level tiles to show where
                      populatePreviousTiles(currentTilesPosition, previousTilesPosition);
@@ -145,6 +180,9 @@ $(document).ready(function() {
               $("#pixel-area").append(elem);
               var zStart = zPos+1000;
               $(elem).css({
+                     "background" : "red",
+                     //"radial-gradient(hsl("+hslLuminance(hslColor)[0]+", "+hslLuminance(hslColor)[1]+"%, "+hslLuminance(hslColor, 'medium')+"%), hsl("+hslLuminance(hslColor)[0]+", "+hslLuminance(hslColor)[1]+"%, "+hslLuminance(hslColor, 'dark')+"%))",
+                     // box-shadow:inset 0 0 5px 3px hsl(197, 80%, 34%);
                      "transform" : "translate3d("+xPos+"px, "+yPos+"px, "+zStart+"px)",
                      "-ms-transform" : "translate3d("+xPos+"px, "+yPos+"px, "+zStart+"px)",
                      "-webkit-transform" : "translate3d("+xPos+"px, "+yPos+"px, "+zStart+"px)",
@@ -158,6 +196,12 @@ $(document).ready(function() {
               });
        }
 
+       // get selected color
+       $("input.jscolor").on("change", function() {
+              var rgbColor = $(this).css("background-color").match(/\b\d[,\d]*\b/g).toString().split(",");
+              hslColor = rgbToHsl(rgbColor[0], rgbColor[1], rgbColor[2]);
+       });
+
        // left       =      37
        // up         =      38
        // right      =      39
@@ -167,16 +211,16 @@ $(document).ready(function() {
               rotateY = -12;
        $("body").keydown(function(e) {
               if(e.keyCode == 37) {
-                     rotateY += 10;
+                     rotateY += 20;
               }
               if(e.keyCode == 38) {
-                     rotateX -= 10;
+                     rotateX -= 20;
               }
               if(e.keyCode == 39) {
-                     rotateY -= 10;
+                     rotateY -= 20;
               }
               if(e.keyCode == 40) {
-                     rotateX += 10;
+                     rotateX += 20;
               }
               $("#pixel-area").css({
                      "transform" : "rotateX("+rotateX+"deg) rotateY("+rotateY+"deg)",
@@ -201,9 +245,5 @@ $(document).ready(function() {
                      Datas["level_"+i].color = [];
                      i++;
               }
-       });
-
-       $('input[type="color"]').hslPicker({
-              color: 'orange'
        });
 });
