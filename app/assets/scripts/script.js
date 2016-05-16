@@ -1,4 +1,44 @@
-var Datas = {};
+var Datas = {}, hslColor = [197, 75, 47];
+
+// create 3 hsl luminance from one given hue
+function hslLuminance(hslColor, select) {
+       var medium = hslColor[2];
+       if(medium <= 16) {medium = 16};
+       var dark = medium - 15;
+       var border = medium - 16;
+       switch(select) {
+              case "medium" :
+                     return "hsl("+hslColor[0]+", "+hslColor[1]+"%, "+medium+"%)";
+                     break;
+              case "dark" :
+                     return "hsl("+hslColor[0]+", "+hslColor[1]+"%, "+dark+"%)";
+                     break;
+              case "border" :
+                     return "hsl("+hslColor[0]+", "+hslColor[1]+"%, "+border+"%)";
+                     break;
+              default :
+                     return "hsl("+hslColor[0]+", "+hslColor[1]+"%, "+hslColor[2]+"%)";
+       }
+}
+
+// translate RGB to HSL ( see https://codepen.io/pankajparashar/pen/oFzIg )
+function rgbToHsl(r, g, b){
+       r /= 255, g /= 255, b /= 255;
+       var max = Math.max(r, g, b), min = Math.min(r, g, b);
+       var h, s, l = (max + min) / 2;
+       if (max == min) { h = s = 0; }
+       else {
+              var d = max - min;
+              s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+              switch (max){
+                     case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                     case g: h = (b - r) / d + 2; break;
+                     case b: h = (r - g) / d + 4; break;
+              }
+              h /= 6;
+       }
+       return [(h*360)|0, ((s*100+0.5)|0), ((l*100+0.5)|0)];
+}
 
 $(document).ready(function() {
        var    gridSize,
@@ -81,7 +121,7 @@ $(document).ready(function() {
        });
 
        // manage levels
-       $("input").click(function() {
+       $("input[type='radio']").click(function() {
               var    previousLvl = lvl,
                      tilesFromThisLvl = $("div.filled");
               lvl = $(this).val();
@@ -92,8 +132,8 @@ $(document).ready(function() {
 
        // store Lvl datas on changed
        function storeLvlDatas(a, b, c) {
-              var    currentTilesPosition = Datas["level_"+a].position,
-                     previousTilesPosition = Datas["level_"+b].position;
+              var currentTilesPosition = Datas["level_"+a].position;
+              var previousTilesPosition = Datas["level_"+b].position;
               $(".filled").removeClass("filled");
               if(previousTilesPosition.length) { // check if clicked level have already been populated and if so, fill this level tiles to show where
                      populatePreviousTiles(currentTilesPosition, previousTilesPosition);
@@ -149,6 +189,10 @@ $(document).ready(function() {
                      "-ms-transform" : "translate3d("+xPos+"px, "+yPos+"px, "+zStart+"px)",
                      "-webkit-transform" : "translate3d("+xPos+"px, "+yPos+"px, "+zStart+"px)",
               });
+              $("div.cube[data-cube-index="+id+"][data-cube-lvl="+lvl+"] > div[class^='face-']").css({
+                     "background" : "radial-gradient("+hslLuminance(hslColor)+", "+hslLuminance(hslColor, 'dark')+")",
+                     "box-shadow" : "inset 0 0 5px 3px "+hslLuminance(hslColor, 'border')
+              });
               setTimeout(function() {
                      $(elem).css({
                             "transform" : "translate3d("+xPos+"px, "+yPos+"px, "+zPos+"px)",
@@ -158,25 +202,32 @@ $(document).ready(function() {
               });
        }
 
-       // left       =      37
-       // up         =      38
-       // right      =      39
-       // down       =      40
+       // get clicked cube color
+       $(".cube > div").click(function() {
+              console.log("allo"); // TODO get cube color
+       });
+
+       // get selected color
+       $("input.jscolor").on("change", function() {
+              var rgbColor = $(this).css("background-color").match(/\b\d[,\d]*\b/g).toString().split(",");
+              hslColor = rgbToHsl(rgbColor[0], rgbColor[1], rgbColor[2]);
+       });
+
        // Rotate view on keydown
        var    rotateX = 10,
               rotateY = -12;
        $("body").keydown(function(e) {
               if(e.keyCode == 37) {
-                     rotateY += 10;
+                     rotateY += 20;
               }
               if(e.keyCode == 38) {
-                     rotateX -= 10;
+                     rotateX -= 20;
               }
               if(e.keyCode == 39) {
-                     rotateY -= 10;
+                     rotateY -= 20;
               }
               if(e.keyCode == 40) {
-                     rotateX += 10;
+                     rotateX += 20;
               }
               $("#pixel-area").css({
                      "transform" : "rotateX("+rotateX+"deg) rotateY("+rotateY+"deg)",
@@ -193,17 +244,16 @@ $(document).ready(function() {
                      "-ms-transform" : "rotateX("+rotateX+"deg) rotateY("+rotateY+"deg)",
                      "-webkit-transform" : "rotateX("+rotateX+"deg) rotateY("+rotateY+"deg)"
               });
+              $("div[class^='face-']").addClass("explode");
+              setTimeout(function() {
+                     //$(".cube").remove();
+              }, 900);
               // reset Object "Datas"
-              $(".cube").remove();
               $(".filled").removeClass("filled");
               while(i < gridSize) {
                      Datas["level_"+i].position = [];
                      Datas["level_"+i].color = [];
                      i++;
               }
-       });
-
-       $('input[type="color"]').hslPicker({
-              color: 'orange'
        });
 });
