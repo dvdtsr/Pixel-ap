@@ -1,15 +1,24 @@
-var Datas = {}, hslColor = "hsl(50, 50%, 50%)";
+var Datas = {}, hslColor = [197, 75, 47];
 
 // create 3 hsl luminance from one given hue
 function hslLuminance(hslColor, select) {
        var medium = hslColor[2];
-       if(medium <= 16) {medium = 16}
+       if(medium <= 16) {medium = 16};
        var dark = medium - 15;
        var border = medium - 16;
-       if(typeof select == "undefined") {return hslColor;}
-       if(select == "medium")      { return "hsl("+hslColor[0]+", "+hslColor[1]+"%, "+medium+"%)"}
-       if(select == "dark")        { return "hsl("+hslColor[0]+", "+hslColor[1]+"%, "+dark+"%)"}
-       if(select == "border")      { return "hsl("+hslColor[0]+", "+hslColor[1]+"%, "+border+"%)"}
+       switch(select) {
+              case "medium" :
+                     return "hsl("+hslColor[0]+", "+hslColor[1]+"%, "+medium+"%)";
+                     break;
+              case "dark" :
+                     return "hsl("+hslColor[0]+", "+hslColor[1]+"%, "+dark+"%)";
+                     break;
+              case "border" :
+                     return "hsl("+hslColor[0]+", "+hslColor[1]+"%, "+border+"%)";
+                     break;
+              default :
+                     return "hsl("+hslColor[0]+", "+hslColor[1]+"%, "+hslColor[2]+"%)";
+       }
 }
 
 // translate RGB to HSL ( see https://codepen.io/pankajparashar/pen/oFzIg )
@@ -26,14 +35,10 @@ function rgbToHsl(r, g, b){
                      case g: h = (b - r) / d + 2; break;
                      case b: h = (r - g) / d + 4; break;
               }
-
               h /= 6;
        }
-       return [(h*100+0.5)|0, ((s*100+0.5)|0), ((l*100+0.5)|0)];
+       return [(h*360)|0, ((s*100+0.5)|0), ((l*100+0.5)|0)];
 }
-
-// radial-gradient(hsl(197, 100%, 50%), hsl(197, 100%, 35%))
-// box-shadow:inset 0 0 5px 3px hsl(197, 80%, 34%);
 
 $(document).ready(function() {
        var    gridSize,
@@ -180,12 +185,13 @@ $(document).ready(function() {
               $("#pixel-area").append(elem);
               var zStart = zPos+1000;
               $(elem).css({
-                     "background" : "red",
-                     //"radial-gradient(hsl("+hslLuminance(hslColor)[0]+", "+hslLuminance(hslColor)[1]+"%, "+hslLuminance(hslColor, 'medium')+"%), hsl("+hslLuminance(hslColor)[0]+", "+hslLuminance(hslColor)[1]+"%, "+hslLuminance(hslColor, 'dark')+"%))",
-                     // box-shadow:inset 0 0 5px 3px hsl(197, 80%, 34%);
                      "transform" : "translate3d("+xPos+"px, "+yPos+"px, "+zStart+"px)",
                      "-ms-transform" : "translate3d("+xPos+"px, "+yPos+"px, "+zStart+"px)",
                      "-webkit-transform" : "translate3d("+xPos+"px, "+yPos+"px, "+zStart+"px)",
+              });
+              $("div.cube[data-cube-index="+id+"][data-cube-lvl="+lvl+"] > div[class^='face-']").css({
+                     "background" : "radial-gradient("+hslLuminance(hslColor)+", "+hslLuminance(hslColor, 'dark')+")",
+                     "box-shadow" : "inset 0 0 5px 3px "+hslLuminance(hslColor, 'border')
               });
               setTimeout(function() {
                      $(elem).css({
@@ -196,16 +202,17 @@ $(document).ready(function() {
               });
        }
 
+       // get clicked cube color
+       $(".cube > div").click(function() {
+              console.log("allo"); // TODO get cube color
+       });
+
        // get selected color
        $("input.jscolor").on("change", function() {
               var rgbColor = $(this).css("background-color").match(/\b\d[,\d]*\b/g).toString().split(",");
               hslColor = rgbToHsl(rgbColor[0], rgbColor[1], rgbColor[2]);
        });
 
-       // left       =      37
-       // up         =      38
-       // right      =      39
-       // down       =      40
        // Rotate view on keydown
        var    rotateX = 10,
               rotateY = -12;
@@ -237,8 +244,11 @@ $(document).ready(function() {
                      "-ms-transform" : "rotateX("+rotateX+"deg) rotateY("+rotateY+"deg)",
                      "-webkit-transform" : "rotateX("+rotateX+"deg) rotateY("+rotateY+"deg)"
               });
+              $("div[class^='face-']").addClass("explode");
+              setTimeout(function() {
+                     //$(".cube").remove();
+              }, 900);
               // reset Object "Datas"
-              $(".cube").remove();
               $(".filled").removeClass("filled");
               while(i < gridSize) {
                      Datas["level_"+i].position = [];
