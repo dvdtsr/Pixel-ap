@@ -97,41 +97,5 @@ body {
   -ms-transform: translateY(-25px) rotateX(-90deg);
   transform: translateY(-25px) rotateX(-90deg);
 }
-#cubes-wrapper #pixel-area .explode.face-0 {
-  -webkit-transform: translateZ(3000px) rotateY(72deg);
-  -ms-transform: translateZ(3000px) rotateY(72deg);
-  transform: translateZ(3000px) rotateY(72deg);
-  opacity: 0;
-}
-#cubes-wrapper #pixel-area .explode.face-1 {
-  -webkit-transform: translateZ(-3000px) rotateX(-320deg);
-  -ms-transform: translateZ(-3000px) rotateX(-320deg);
-  transform: translateZ(-3000px) rotateX(-320deg);
-  opacity: 0;
-}
-#cubes-wrapper #pixel-area .explode.face-2 {
-  -webkit-transform: translateX(3000px) rotateY(-150deg);
-  -ms-transform: translateX(3000px) rotateY(-150deg);
-  transform: translateX(3000px) rotateY(-150deg);
-  opacity: 0;
-}
-#cubes-wrapper #pixel-area .explode.face-3 {
-  -webkit-transform: translateX(-3000px) rotateY(145deg);
-  -ms-transform: translateX(-3000px) rotateY(145deg);
-  transform: translateX(-3000px) rotateY(145deg);
-  opacity: 0;
-}
-#cubes-wrapper #pixel-area .explode.face-4 {
-  -webkit-transform: translateY(3000px) rotateX(220deg);
-  -ms-transform: translateY(3000px) rotateX(220deg);
-  transform: translateY(3000px) rotateX(220deg);
-  opacity: 0;
-}
-#cubes-wrapper #pixel-area .explode.face-5 {
-  -webkit-transform: translateY(-3000px) rotateX(-230deg);
-  -ms-transform: translateY(-3000px) rotateX(-230deg);
-  transform: translateY(-3000px) rotateX(-230deg);
-  opacity: 0;
-}
 
 /*# sourceMappingURL=main.scss.map */

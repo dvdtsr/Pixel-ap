@@ -39,14 +39,13 @@ function rgbToHsl(r, g, b){
        }
        return [(h*360)|0, ((s*100+0.5)|0), ((l*100+0.5)|0)];
 }
-
 $(document).ready(function() {
        var    gridSize,
               wrapperDim,
               cubeDim,
               lvl = 0;
 
-       gridSize = 10; // TODO : fix tile and cube XY attribution
+       gridSize = 15; // TODO : fix tile and cube XY attribution
        wrapperDim = $("#pixel-area").innerWidth();
        cubeDim = wrapperDim / gridSize;
 
