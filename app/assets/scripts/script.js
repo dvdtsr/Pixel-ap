@@ -1,4 +1,4 @@
-var Datas = {}, hslColor = [197, 75, 47];
+var Datas = {}, hslColor = [197, 75, 47], gridSize;
 
 // create 3 hsl luminance from one given hue
 function hslLuminance(hslColor, select) {
@@ -40,14 +40,23 @@ function rgbToHsl(r, g, b){
        return [(h*360)|0, ((s*100+0.5)|0), ((l*100+0.5)|0)];
 }
 $(document).ready(function() {
-       var    gridSize,
-              wrapperDim,
+       var    wrapperDim,
               cubeDim,
               lvl = 0;
 
-       gridSize = 15; // TODO : fix tile and cube XY attribution
+       var createdTiles;
+
+       gridSize = 10; // TODO : fix tile and cube XY attribution
        wrapperDim = $("#pixel-area").innerWidth();
        cubeDim = wrapperDim / gridSize;
+
+
+       // set cubes quantity
+       $("#quantity-setting").submit(function() {
+              gridSize = $(this).children("input").val();
+              tilesCreation();
+              clickTiles();
+       });
 
        // create as many object "level-N" property than there are gridsize-lvl
        (function() {
@@ -66,7 +75,7 @@ $(document).ready(function() {
        })();
 
        // tiles & radios creation
-       (function() {
+       function tilesCreation() {
               var    k = 0,
                      l = 0,
                      tileWidth = Math.floor($("#tiles-pad").innerWidth()/gridSize);
@@ -90,34 +99,37 @@ $(document).ready(function() {
                             "name" : "level",
                             "value" : l
                      });
-                     $("#menu > form").append(radio);
+                     $("#form-lvl").append(radio);
                      l++;
               }
-              $("#menu > form > input[type='radio']:nth-child(1)").attr("checked", "checked");
-       })();
+              $("#form-lvl > input[type='radio']:nth-child(1)").attr("checked", "checked");
+       };
 
        // inject cube
-       $(".tile").click(function() {
-              var    current = $(this).attr("data-tile-index"),
+       function clickTiles() {
+              $(".tile").click(function() {
+                     var    current = $(this).attr("data-tile-index"),
                      tileX,
                      tileY;
-              if($(".cube[data-cube-index='"+current+"'][data-cube-lvl='"+lvl+"']").length){ // remove cube if exist
-                     $(this).removeClass("filled");
-                     $(".cube[data-cube-index='"+current+"'][data-cube-lvl='"+lvl+"']").remove();
-              }
-              else{ // TODO fix tileX and tileY calcul logic
-                     if(current.length === 1) {
-                            tileX = current;
-                            tileY = 0;
+                     if($(".cube[data-cube-index='"+current+"'][data-cube-lvl='"+lvl+"']").length){ // remove cube if exist
+                            $(this).removeClass("filled");
+                            $(".cube[data-cube-index='"+current+"'][data-cube-lvl='"+lvl+"']").remove();
                      }
-                     else {
-                            tileX = Math.floor(current%gridSize);
-                            tileY = current.substr(0, 1);
+                     else{ // TODO fix tileX and tileY calcul logic
+                            if(current.length === 1) {
+                                   tileX = current;
+                                   tileY = 0;
+                            }
+                            else {
+                                   tileX = Math.floor(current%gridSize);
+                                   tileY = current.substr(0, 1);
+                            }
+                            $(this).addClass("filled");
+                            createSetInjectCube(tileX, tileY, lvl, current);
                      }
-                     $(this).addClass("filled");
-                     createSetInjectCube(tileX, tileY, lvl, current);
-              }
-       });
+              });
+       }
+
 
        // manage levels
        $("input[type='radio']").click(function() {
@@ -173,7 +185,11 @@ $(document).ready(function() {
                      "class" : "cube",
                      "data-cube-index" : id,
                      "data-cube-lvl" : lvl
+              }).css({
+                     "width" : cubeDim+"px",
+                     "height" : cubeDim+"px"
               });
+              alert(cubeDim);
               var j = 0;
               while (j < 6) {
                      var face = document.createElement("div");

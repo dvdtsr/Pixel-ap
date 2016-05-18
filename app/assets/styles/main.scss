@@ -10,6 +10,11 @@ body {
        height:100vh;
        form {
               clear:both;
+              .jscolor::after{
+                     content:"";
+                     display:block;
+                     clear:both;
+              }
        }
        #tiles-pad {
               width:90%;

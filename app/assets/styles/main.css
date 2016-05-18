@@ -13,6 +13,11 @@ body {
 #menu form {
   clear: both;
 }
+#menu form .jscolor::after {
+  content: "";
+  display: block;
+  clear: both;
+}
 #menu #tiles-pad {
   width: 90%;
   margin: 0 auto;
