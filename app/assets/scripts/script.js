@@ -103,7 +103,7 @@ $(document).ready(function() {
        };
 
        // inject cube
-       $(document).on("click", $(".tile"), function(el) {
+       $(document).on("click", ".tile", function(el) {
               var    current = $(el.target).attr("data-tile-index"),
                      tileX,
                      tileY;
@@ -111,14 +111,14 @@ $(document).ready(function() {
                      $(el.target).removeClass("filled");
                      $(".cube[data-cube-index='"+current+"'][data-cube-lvl='"+lvl+"']").remove();
               }
-              else{ // TODO fix tileX and tileY calcul logic
-                     if(current.length === 1) {
-                            tileX = current;
-                            tileY = 0;
+              else{
+                     if(current > gridSize-1) {
+                            tileX = current%gridSize;
+                            tileY = Math.floor(current / gridSize);
                      }
                      else {
                             tileX = Math.floor(current%gridSize);
-                            tileY = current.substr(0, 1);
+                            tileY = 0;
                      }
                      $(el.target).addClass("filled");
                      createSetInjectCube(tileX, tileY, lvl, current);
@@ -127,7 +127,7 @@ $(document).ready(function() {
 
 
        // manage levels
-       $(document).on("click", $("input[type='radio']"), function(el) {
+       $(document).on("click", "input[type='radio']", function(el) {
               var    previousLvl = lvl,
               tilesFromThisLvl = $("div.filled");
               lvl = $(el.target).val();
@@ -200,6 +200,7 @@ $(document).ready(function() {
               });
               $("div.cube[data-cube-index="+id+"][data-cube-lvl="+lvl+"] > div[class^='face-']").css({
                      "background" : "radial-gradient("+hslLuminance(hslColor)+", "+hslLuminance(hslColor, 'dark')+")",
+                     "background-color" : hslLuminance(hslColor),
                      "box-shadow" : "inset 0 0 5px 3px "+hslLuminance(hslColor, 'border')
               });
               $(".face-0").css({
@@ -242,8 +243,9 @@ $(document).ready(function() {
        }
 
        // get clicked cube color
-       $(".cube > div").click(function() {
-              console.log("allo"); // TODO get cube color
+       $(document).on("click", ".cube > div", function(e) { // TODO
+              var str = $(e.target).css("background-color");
+              $("#color-settings > input").val(str);
        });
 
        // get selected color
@@ -284,9 +286,7 @@ $(document).ready(function() {
                      "-webkit-transform" : "rotateX("+rotateX+"deg) rotateY("+rotateY+"deg)"
               });
               $("div[class^='face-']").addClass("explode");
-              setTimeout(function() {
-                     //$(".cube").remove();
-              }, 900);
+              $(".cube").remove();
               // reset Object "Datas"
               $(".filled").removeClass("filled");
               while(i < gridSize) {
