@@ -1,4 +1,4 @@
-var Datas = {}, hslColor = [197, 75, 47];
+var Datas = {}, hslColor = [197, 75, 47], gridSize;
 
 // create 3 hsl luminance from one given hue
 function hslLuminance(hslColor, select) {
@@ -39,19 +39,24 @@ function rgbToHsl(r, g, b){
        }
        return [(h*360)|0, ((s*100+0.5)|0), ((l*100+0.5)|0)];
 }
-
 $(document).ready(function() {
-       var    gridSize,
-              wrapperDim,
+       var    wrapperDim,
               cubeDim,
               lvl = 0;
 
-       gridSize = 10; // TODO : fix tile and cube XY attribution
-       wrapperDim = $("#pixel-area").innerWidth();
-       cubeDim = wrapperDim / gridSize;
+       var createdTiles;
+
+       // set cubes quantity
+       $("#quantity-setting").submit(function() {
+              gridSize = $(this).children("input").val();
+              wrapperDim = $("#pixel-area").innerWidth();
+              cubeDim = wrapperDim / gridSize;
+              tilesCreation();
+              initDatas();
+       });
 
        // create as many object "level-N" property than there are gridsize-lvl
-       (function() {
+       function initDatas() {
               Datas.levels = gridSize;
               var i = 0;
               while(i < gridSize) {
@@ -64,10 +69,10 @@ $(document).ready(function() {
                      );
                      i++;
               }
-       })();
+       };
 
        // tiles & radios creation
-       (function() {
+       function tilesCreation() {
               var    k = 0,
                      l = 0,
                      tileWidth = Math.floor($("#tiles-pad").innerWidth()/gridSize);
@@ -91,40 +96,41 @@ $(document).ready(function() {
                             "name" : "level",
                             "value" : l
                      });
-                     $("#menu > form").append(radio);
+                     $("#form-lvl").append(radio);
                      l++;
               }
-              $("#menu > form > input[type='radio']:nth-child(1)").attr("checked", "checked");
-       })();
+              $("#form-lvl > input[type='radio']:nth-child(1)").attr("checked", "checked");
+       };
 
        // inject cube
-       $(".tile").click(function() {
-              var    current = $(this).attr("data-tile-index"),
+       $(document).on("click", ".tile", function(el) {
+              var    current = $(el.target).attr("data-tile-index"),
                      tileX,
                      tileY;
               if($(".cube[data-cube-index='"+current+"'][data-cube-lvl='"+lvl+"']").length){ // remove cube if exist
-                     $(this).removeClass("filled");
+                     $(el.target).removeClass("filled");
                      $(".cube[data-cube-index='"+current+"'][data-cube-lvl='"+lvl+"']").remove();
               }
-              else{ // TODO fix tileX and tileY calcul logic
-                     if(current.length === 1) {
-                            tileX = current;
-                            tileY = 0;
+              else{
+                     if(current > gridSize-1) {
+                            tileX = current%gridSize;
+                            tileY = Math.floor(current / gridSize);
                      }
                      else {
                             tileX = Math.floor(current%gridSize);
-                            tileY = current.substr(0, 1);
+                            tileY = 0;
                      }
-                     $(this).addClass("filled");
+                     $(el.target).addClass("filled");
                      createSetInjectCube(tileX, tileY, lvl, current);
               }
        });
 
+
        // manage levels
-       $("input[type='radio']").click(function() {
+       $(document).on("click", "input[type='radio']", function(el) {
               var    previousLvl = lvl,
-                     tilesFromThisLvl = $("div.filled");
-              lvl = $(this).val();
+              tilesFromThisLvl = $("div.filled");
+              lvl = $(el.target).val();
               if(previousLvl != lvl) {
                      storeLvlDatas(previousLvl, lvl, tilesFromThisLvl);
               }
@@ -178,7 +184,10 @@ $(document).ready(function() {
               var j = 0;
               while (j < 6) {
                      var face = document.createElement("div");
-                     $(face).attr("class", "face-"+j);
+                     $(face).attr("class", "face-"+j).css({
+                            "width" : cubeDim+"px",
+                            "height" : cubeDim+"px"
+                     });
                      elem.appendChild(face);
                      j++;
               }
@@ -191,7 +200,38 @@ $(document).ready(function() {
               });
               $("div.cube[data-cube-index="+id+"][data-cube-lvl="+lvl+"] > div[class^='face-']").css({
                      "background" : "radial-gradient("+hslLuminance(hslColor)+", "+hslLuminance(hslColor, 'dark')+")",
+                     "background-color" : hslLuminance(hslColor),
                      "box-shadow" : "inset 0 0 5px 3px "+hslLuminance(hslColor, 'border')
+              });
+              $(".face-0").css({
+                     "transform" : "translateZ("+cubeDim/2+"px ) rotateY( 0deg )",
+                     "-ms-transform" : "translateZ("+cubeDim/2+"px ) rotateY( 0deg )",
+                     "-webkit-transform" : "translateZ("+cubeDim/2+"px ) rotateY( 0deg )"
+              });
+              $(".face-1").css({
+                     "transform" : "translateZ(-"+cubeDim/2+"px ) rotateY( 180deg )",
+                     "-ms-transform" : "translateZ(-"+cubeDim/2+"px ) rotateY( 180deg )",
+                     "-webkit-transform" : "translateZ(-"+cubeDim/2+"px ) rotateY( 180deg )"
+              });
+              $(".face-2").css({
+                     "transform" : "translateX("+cubeDim/2+"px ) rotateY( 90deg)",
+                     "-ms-transform" : "translateX("+cubeDim/2+"px ) rotateY( 90deg)",
+                     "-webkit-transform" : "translateX("+cubeDim/2+"px ) rotateY( 90deg)"
+              });
+              $(".face-3").css({
+                     "transform" : "translateX(-"+cubeDim/2+"px ) rotateY( 90deg)",
+                     "-ms-transform" : "translateX(-"+cubeDim/2+"px ) rotateY( 90deg)",
+                     "-webkit-transform" : "translateX(-"+cubeDim/2+"px ) rotateY( 90deg)"
+              });
+              $(".face-4").css({
+                     "transform" : "translateY("+cubeDim/2+"px ) rotateX( 90deg)",
+                     "-ms-transform" : "translateY("+cubeDim/2+"px ) rotateX( 90deg)",
+                     "-webkit-transform" : "translateY("+cubeDim/2+"px ) rotateX( 90deg)"
+              });
+              $(".face-5").css({
+                     "transform" : "translateY(-"+cubeDim/2+"px ) rotateX( 90deg)",
+                     "-ms-transform" : "translateY(-"+cubeDim/2+"px ) rotateX( 90deg)",
+                     "-webkit-transform" : "translateY(-"+cubeDim/2+"px ) rotateX( 90deg)"
               });
               setTimeout(function() {
                      $(elem).css({
@@ -203,8 +243,9 @@ $(document).ready(function() {
        }
 
        // get clicked cube color
-       $(".cube > div").click(function() {
-              console.log("allo"); // TODO get cube color
+       $(document).on("click", ".cube > div", function(e) { // TODO
+              var str = $(e.target).css("background-color");
+              $("#color-settings > input").val(str);
        });
 
        // get selected color
@@ -245,9 +286,7 @@ $(document).ready(function() {
                      "-webkit-transform" : "rotateX("+rotateX+"deg) rotateY("+rotateY+"deg)"
               });
               $("div[class^='face-']").addClass("explode");
-              setTimeout(function() {
-                     //$(".cube").remove();
-              }, 900);
+              $(".cube").remove();
               // reset Object "Datas"
               $(".filled").removeClass("filled");
               while(i < gridSize) {

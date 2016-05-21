@@ -17,13 +17,19 @@
        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 </head>
 <body>
-       <div id="content">
+       <div>
               <div id="menu">
                      <div id="tiles-pad"></div>
-                     <form>
+                     <form action="javascript:void(0)" id="form-lvl">
                      </form>
-                     <button type="button">Reset</button>
-                     <input class="jscolor" value="#1a9dd4">
+                     <form action="javascript:void(0)" id="color-settings">
+                            <button type="button">Reset</button>
+                            <input class="jscolor {closable:true,closeText:'X'}" value="#1a9dd4">
+                     </form>
+                     <form action="javascript:void(0)" id="quantity-setting">
+                            <button type="submit">Ok</button>
+                            <input id="set-level" placeholder="wut lvl" value="10">
+                     </form>
               </div>
               <div id="cubes-wrapper">
                      <div id="pixel-area">
