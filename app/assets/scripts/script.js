@@ -48,15 +48,25 @@ $(document).ready(function() {
 
        // set cubes quantity
        $("#quantity-setting").submit(function() {
+              $(".tile, #form-lvl input").remove();
               gridSize = $(this).children("input").val();
               wrapperDim = $("#pixel-area").innerWidth();
               cubeDim = wrapperDim / gridSize;
               tilesCreation();
               initDatas();
+              $(".cube").remove();
+              $(".filled").removeClass("filled");
+              var i = 0;
+              while(i < gridSize) {
+                     Datas["level_"+i].position = [];
+                     Datas["level_"+i].color = [];
+                     i++;
+              }
        });
 
        // create as many object "level-N" property than there are gridsize-lvl
        function initDatas() {
+              Datas = {};
               Datas.levels = gridSize;
               var i = 0;
               while(i < gridSize) {
@@ -99,32 +109,40 @@ $(document).ready(function() {
                      $("#form-lvl").append(radio);
                      l++;
               }
-              $("#form-lvl > input[type='radio']:nth-child(1)").attr("checked", "checked");
+              $("#form-lvl input:first-of-type").attr("checked", "checked");
        };
 
        // inject cube
-       $(document).on("click", ".tile", function(el) {
-              var    current = $(el.target).attr("data-tile-index"),
+       var preventInjection = false;
+       $(document).mousedown(function() {
+              preventInjection = true;
+       });
+       $(document).mouseup(function() {
+              preventInjection = false;
+       });
+       $(document).on("mouseover click", ".tile", function(el) {
+              if(preventInjection || el.type == "click") {
+                     var    current = $(el.target).attr("data-tile-index"),
                      tileX,
                      tileY;
-              if($(".cube[data-cube-index='"+current+"'][data-cube-lvl='"+lvl+"']").length){ // remove cube if exist
-                     $(el.target).removeClass("filled");
-                     $(".cube[data-cube-index='"+current+"'][data-cube-lvl='"+lvl+"']").remove();
-              }
-              else{
-                     if(current > gridSize-1) {
-                            tileX = current%gridSize;
-                            tileY = Math.floor(current / gridSize);
+                     if($(".cube[data-cube-index='"+current+"'][data-cube-lvl='"+lvl+"']").length){ // remove cube if exist
+                            $(el.target).removeClass("filled");
+                            $(".cube[data-cube-index='"+current+"'][data-cube-lvl='"+lvl+"']").remove();
                      }
-                     else {
-                            tileX = Math.floor(current%gridSize);
-                            tileY = 0;
+                     else{
+                            if(current > gridSize-1) {
+                                   tileX = current%gridSize;
+                                   tileY = Math.floor(current / gridSize);
+                            }
+                            else {
+                                   tileX = Math.floor(current%gridSize);
+                                   tileY = 0;
+                            }
+                            $(el.target).addClass("filled");
+                            createSetInjectCube(tileX, tileY, lvl, current);
                      }
-                     $(el.target).addClass("filled");
-                     createSetInjectCube(tileX, tileY, lvl, current);
               }
        });
-
 
        // manage levels
        $(document).on("click", "input[type='radio']", function(el) {
@@ -256,7 +274,8 @@ $(document).ready(function() {
 
        // Rotate view on keydown
        var    rotateX = 10,
-              rotateY = -12;
+              rotateY = -12,
+              translateZ = -250;
        $("body").keydown(function(e) {
               if(e.keyCode == 37) {
                      rotateY += 20;
@@ -271,28 +290,34 @@ $(document).ready(function() {
                      rotateX += 20;
               }
               $("#pixel-area").css({
-                     "transform" : "rotateX("+rotateX+"deg) rotateY("+rotateY+"deg)",
-                     "-ms-transform" : "rotateX("+rotateX+"deg) rotateY("+rotateY+"deg)",
-                     "-webkit-transform" : "rotateX("+rotateX+"deg) rotateY("+rotateY+"deg)"
+                     "transform" : "rotateX("+rotateX+"deg) rotateY("+rotateY+"deg) translateZ("+translateZ+"px)",
+                     "-ms-transform" : "rotateX("+rotateX+"deg) rotateY("+rotateY+"deg) translateZ("+translateZ+"px)",
+                     "-webkit-transform" : "rotateX("+rotateX+"deg) rotateY("+rotateY+"deg) translateZ("+translateZ+"px)"
               });
        });
-       $("button").click(function() { // reset ALL
-              rotateX = 10,
-              rotateY = -12;
-              var i = 0;
+       $("button[name='reset-position']").click(function() {
+              var    initialX = 10,
+                     initialY = -12,
+                     initialZ = -250;
               $("#pixel-area").css({
-                     "transform" : "rotateX("+rotateX+"deg) rotateY("+rotateY+"deg)",
-                     "-ms-transform" : "rotateX("+rotateX+"deg) rotateY("+rotateY+"deg)",
-                     "-webkit-transform" : "rotateX("+rotateX+"deg) rotateY("+rotateY+"deg)"
+                     "transform" : "rotateX("+initialX+"deg) rotateY("+initialY+"deg) translateZ("+initialZ+"px)",
+                     "-ms-transform" : "rotateX("+initialX+"deg) rotateY("+initialY+"deg) translateZ("+initialZ+"px)",
+                     "-webkit-transform" : "rotateX("+initialX+"deg) rotateY("+initialY+"deg) translateZ("+initialZ+"px)"
               });
-              $("div[class^='face-']").addClass("explode");
-              $(".cube").remove();
-              // reset Object "Datas"
-              $(".filled").removeClass("filled");
-              while(i < gridSize) {
-                     Datas["level_"+i].position = [];
-                     Datas["level_"+i].color = [];
-                     i++;
+       });
+
+       $(document).on("mouseover", "#form-lvl", function(e) {
+              var cubesToFade;
+              if($(e.target).attr("type") == "radio" ) {
+                     $(e.target).val();
               }
+              $.each($(".cube"), function(i) {
+                     if($(".cube").eq(i).attr("data-cube-lvl") != lvl) {
+                            $(this).addClass("fade");
+                     }
+              });
+       });
+       $(document).on("mouseout", "#form-lvl", function(e) {
+              $(".cube").removeClass("fade");
        });
 });

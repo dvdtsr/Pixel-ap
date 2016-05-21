@@ -1,5 +1,8 @@
+$grey-text: #ccc;
+$grey-background: #4d4d4d;
+$grey-background-hover: #5d5d5d;
 body {
-      background: #f9f9f9;
+      background: linear-gradient(#f1f1f1, #ccc);
       font-family: 'Heveltica', sans-serif;
       margin:0;
 }
@@ -10,6 +13,52 @@ body {
        height:100vh;
        form {
               clear:both;
+              margin:40px auto;
+              width:90%;
+              input {
+                     display:inline-block;
+                     width:70%;
+                     height:70px;
+                     box-sizing:border-box;
+                     border:none;
+                     padding-left:20px;
+                     font-size:19px;
+                     color:$grey-text;
+              }
+              ::-webkit-input-placeholder {
+                 color: $grey-text;
+              }
+              :-moz-placeholder {
+                 color: $grey-text;
+              }
+              ::-moz-placeholder {
+                 color: $grey-text;
+              }
+              :-ms-input-placeholder {
+                 color: $grey-text;
+              }
+              input:focus {
+                     outline: none;
+              }
+              button {
+                     display:inline-block;
+                     width:70px;
+                     height:70px;
+                     float:right;
+                     box-sizing:border-box;
+                     border:none;
+                     cursor:pointer;
+                     font-size:19px;
+                     color:$grey-text;
+                     background-color:$grey-background;
+              }
+              button:hover {
+                     background-color:$grey-background-hover;
+              }
+              .jscolor {
+                     color:$grey-text!important;
+                     cursor:pointer;
+              }
               .jscolor::after{
                      content:"";
                      display:block;
@@ -24,6 +73,7 @@ body {
                      background:#ccc;
                      border:1px solid #4d4d4d;
                      box-sizing:border-box;
+                     cursor:pointer;
               }
               .tile.filled {
                      background-color:#4d4d4d;
@@ -36,18 +86,27 @@ body {
        float:left;
        width:80%;
        #pixel-area {
-             transform: rotateX(10deg) rotateY(-22deg);
-             transform-style: preserve-3d;
-             width:500px;
-             height:500px;
-             margin:100px auto 0 auto;
-             transition: all ease-in-out 0.3s;
-             .cube {
-                   position: absolute;
-                   transform-style: preserve-3d;
-                   transition: all ease-in 0.4s;
-                   box-shadow:inset 0 0 5px 3px hsl(197, 80%, 34%);
+              transform: rotateX(10deg) rotateY(-22deg);
+              transform-style: preserve-3d;
+              width:500px;
+              height:500px;
+              margin:100px auto 0 auto;
+              transition: all cubic-bezier(.91,.05,.12,.95) 0.3s;
+              .cube {
+                     position: absolute;
+                     transform-style: preserve-3d;
+                     transition: transform ease-in 0.4s, opacity linear 0.1s;
+                     box-shadow:inset 0 0 5px 3px hsl(197, 80%, 34%);
               }
-             div[class^="face-"] { position:absolute;transition:all ease-out 0.9s;}
+              .cube.fade {
+                     opacity: 0.1;
+              }
+              div[class^="face-"] { position:absolute;transition:all ease-out 0.9s;}
+              .face-0 { transform: translateZ( 250px ) rotateX( 0deg ); }
+              .face-1 { transform: translateZ( -250px ) rotateX( 180deg ); }
+              .face-2 { transform: translateX( 250px ) rotateY( 90deg ); }
+              .face-3 { transform: translateX( -250px ) rotateY( 90deg ); }
+              .face-4 { transform: translateY( 250px ) rotateX( 90deg ); }
+              .face-5 { transform: translateY( -250px ) rotateX( 90deg ); }
        }
 }

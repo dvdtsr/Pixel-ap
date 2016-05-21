@@ -19,16 +19,16 @@
 <body>
        <div>
               <div id="menu">
-                     <div id="tiles-pad"></div>
+                     <form action="javascript:void(0)" id="quantity-setting">
+                            <input id="set-level" placeholder="max 20" autocomplete="off"><!--
+                            --><button type="submit">Set</button>
+                     </form>
                      <form action="javascript:void(0)" id="form-lvl">
+                            <div id="tiles-pad"></div>
                      </form>
                      <form action="javascript:void(0)" id="color-settings">
-                            <button type="button">Reset</button>
-                            <input class="jscolor {closable:true,closeText:'X'}" value="#1a9dd4">
-                     </form>
-                     <form action="javascript:void(0)" id="quantity-setting">
-                            <button type="submit">Ok</button>
-                            <input id="set-level" placeholder="wut lvl" value="10">
+                            <button name="reset-position" type="button">Reset</button><!--
+                            --><input class="jscolor {closable:true,closeText:'X'}" value="#1a9dd4">
                      </form>
               </div>
               <div id="cubes-wrapper">
