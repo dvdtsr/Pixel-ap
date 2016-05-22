@@ -20,7 +20,7 @@
        <div>
               <div id="menu">
                      <form action="javascript:void(0)" id="quantity-setting">
-                            <input id="set-level" placeholder="max 20" autocomplete="off"><!--
+                            <input type="text" id="set-level" placeholder="max 20" autocomplete="off"><!--
                             --><button type="submit">Set</button>
                      </form>
                      <form action="javascript:void(0)" id="form-lvl">
@@ -28,7 +28,10 @@
                      </form>
                      <form action="javascript:void(0)" id="color-settings">
                             <button name="reset-position" type="button">Reset</button><!--
-                            --><input class="jscolor {closable:true,closeText:'X'}" value="#1a9dd4">
+                            --><input type="text" class="jscolor {closable:true,closeText:'X'}" value="#1a9dd4">
+                     </form>
+                     <form action="javascript:void(0)" id="save-cube">
+                            <button name="save-cube" type="button">Save</button>
                      </form>
               </div>
               <div id="cubes-wrapper">

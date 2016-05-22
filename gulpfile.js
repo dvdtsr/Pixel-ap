@@ -15,9 +15,9 @@ imagemin     = require('gulp-imagemin');
 
 // Connect Task
 gulp.task('connect', connect.server({
-  root: './app',
-  port: 1337,
-  livereload: true
+       root: './app',
+       port: 1337,
+       livereload: true
 }));
 
 gulp.task('html', function () {

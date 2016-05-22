@@ -48,7 +48,7 @@ $(document).ready(function() {
 
        // set cubes quantity
        $("#quantity-setting").submit(function() {
-              $(".tile, #form-lvl input").remove();
+              $(".tile, #form-lvl label, #form-lvl input").remove();
               gridSize = $(this).children("input").val();
               wrapperDim = $("#pixel-area").innerWidth();
               cubeDim = wrapperDim / gridSize;
@@ -87,7 +87,6 @@ $(document).ready(function() {
                      l = 0,
                      tileWidth = Math.floor($("#tiles-pad").innerWidth()/gridSize);
               while (k < gridSize*gridSize) {
-                     // inject tiles
                      var tile = document.createElement("div");
                      $(tile).attr({
                             "class" : "tile",
@@ -99,14 +98,19 @@ $(document).ready(function() {
                      k++;
               }
               while(l < gridSize) {
-                     // inject radio
                      var radio = document.createElement("input");
+                     var label = document.createElement("label");
                      $(radio).attr({
                             "type" : "radio",
                             "name" : "level",
                             "value" : l
                      });
+                     $(label).attr({
+                            "for":"lvl"
+                     });
                      $("#form-lvl").append(radio);
+                     $("#form-lvl").append(label);
+                     $(label).text(l+1);
                      l++;
               }
               $("#form-lvl input:first-of-type").attr("checked", "checked");
@@ -319,5 +323,11 @@ $(document).ready(function() {
        });
        $(document).on("mouseout", "#form-lvl", function(e) {
               $(".cube").removeClass("fade");
+       });
+
+       // save cube
+       $("button[name='save-cube']").click(function() {
+              var JSONcube = JSON.stringify(Datas["level_0"], null);
+              console.log("JSONcube : "+JSONcube);
        });
 });

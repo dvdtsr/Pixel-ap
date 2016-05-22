@@ -1,21 +1,23 @@
-$grey-text: #ccc;
-$grey-background: #4d4d4d;
+$grey-text: #ababab;
+$grey-background: #ccc;
 $grey-background-hover: #5d5d5d;
+$grey-background-menu: #f1f1f1;
 body {
-      background: linear-gradient(#f1f1f1, #ccc);
+      background: linear-gradient($grey-background-menu, $grey-background);
       font-family: 'Heveltica', sans-serif;
       margin:0;
 }
 #menu {
        float:left;
        width:20%;
-       background:#f1f1f1;
+       background:$grey-background-menu;
        height:100vh;
+       box-shadow:1px 0px 5px $grey-background;
        form {
               clear:both;
               margin:40px auto;
               width:90%;
-              input {
+              input[type='text'] {
                      display:inline-block;
                      width:70%;
                      height:70px;
@@ -39,6 +41,21 @@ body {
               }
               input:focus {
                      outline: none;
+              }
+              input[type='radio']:not(old) {
+                     width:calc(100%/20);
+
+                     padding:0;
+                     margin:0;
+                     opacity:0;
+              }
+              input[type='radio']:not(old) + label{
+                     margin-left:calc(-100%/20);
+                     width:calc(100%/20);
+
+                     display:inline-block;
+                     text-align:center;
+                     font-size:11px;
               }
               button {
                      display:inline-block;
@@ -66,12 +83,11 @@ body {
               }
        }
        #tiles-pad {
-              width:90%;
-              margin:0 auto;
+              width:100%;
               .tile {
                      float:left;
-                     background:#ccc;
-                     border:1px solid #4d4d4d;
+                     background:#dedede;
+                     border:3px solid $grey-background-menu;
                      box-sizing:border-box;
                      cursor:pointer;
               }

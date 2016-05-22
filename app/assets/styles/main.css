@@ -11,13 +11,15 @@ body {
   width: 20%;
   background: #f1f1f1;
   height: 100vh;
+  -webkit-box-shadow: 1px 0px 5px #ccc;
+  box-shadow: 1px 0px 5px #ccc;
 }
 #menu form {
   clear: both;
   margin: 40px auto;
   width: 90%;
 }
-#menu form input {
+#menu form input[type='text'] {
   display: inline-block;
   width: 70%;
   height: 70px;
@@ -27,19 +29,35 @@ body {
   border: none;
   padding-left: 20px;
   font-size: 19px;
-  color: #ccc;
+  color: #ababab;
 }
 #menu form ::-webkit-input-placeholder {
-  color: #ccc;
+  color: #ababab;
 }
 #menu form ::-moz-placeholder {
-  color: #ccc;
+  color: #ababab;
 }
 #menu form :-ms-input-placeholder {
-  color: #ccc;
+  color: #ababab;
 }
 #menu form input:focus {
   outline: none;
+}
+#menu form input[type='radio']:not(old) {
+  width: -webkit-calc(100%/20);
+  width: calc(100%/20);
+  padding: 0;
+  margin: 0;
+  opacity: 0;
+}
+#menu form input[type='radio']:not(old) + label {
+  margin-left: -webkit-calc(-100%/20);
+  margin-left: calc(-100%/20);
+  width: -webkit-calc(100%/20);
+  width: calc(100%/20);
+  display: inline-block;
+  text-align: center;
+  font-size: 11px;
 }
 #menu form button {
   display: inline-block;
@@ -52,14 +70,14 @@ body {
   border: none;
   cursor: pointer;
   font-size: 19px;
-  color: #ccc;
-  background-color: #4d4d4d;
+  color: #ababab;
+  background-color: #ccc;
 }
 #menu form button:hover {
   background-color: #5d5d5d;
 }
 #menu form .jscolor {
-  color: #ccc !important;
+  color: #ababab !important;
   cursor: pointer;
 }
 #menu form .jscolor::after {
@@ -68,13 +86,12 @@ body {
   clear: both;
 }
 #menu #tiles-pad {
-  width: 90%;
-  margin: 0 auto;
+  width: 100%;
 }
 #menu #tiles-pad .tile {
   float: left;
-  background: #ccc;
-  border: 1px solid #4d4d4d;
+  background: #dedede;
+  border: 3px solid #f1f1f1;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
