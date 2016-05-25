@@ -17,6 +17,10 @@
        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 </head>
 <body>
+       <?php
+       include 'modules/controller/main.php';
+       connect();
+       ?>
        <div>
               <div id="menu">
                      <form action="javascript:void(0)" id="quantity-setting">
@@ -44,7 +48,7 @@
        window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')
        </script>
        <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
-       <script>
+       <script>/*
        (function(b, o, i, l, e, r) {
        b.GoogleAnalyticsObject = l;
        b[l] || (b[l] =
@@ -59,6 +63,7 @@
        }(window, document, 'script', 'ga'));
        ga('create', 'UA-XXXXX-X');
        ga('send', 'pageview');
+       */
        </script>
        <script src="assets/scripts/jscolor.min.js"></script>
        <!-- build:js script.js -->
